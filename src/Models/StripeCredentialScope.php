@@ -2,11 +2,13 @@
 
 namespace Adsy2010\LaravelStripeWrapper\Models;
 
+use Adsy2010\LaravelStripeWrapper\Exceptions\StripeCredentialsMissingException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Stripe\StripeClient;
 
 class StripeCredentialScope extends Model
 {
@@ -27,9 +29,30 @@ class StripeCredentialScope extends Model
     }
 
     /**
+     * Creates a stripe client from the scope and access provided
+     *
+     * @param array $scopes
+     * @param string $access
+     * @return StripeClient
+     * @throws StripeCredentialsMissingException
+     */
+    public static function client(array $scopes, $access = 'r'): StripeClient
+    {
+        $credentials = self::retrieve($scopes, $access);
+
+        if(!(count($credentials) > 0)){
+            throw new StripeCredentialsMissingException();
+        }
+
+        $credential = $credentials->first();
+
+        return new StripeClient($credential->stripeCredential->value);
+    }
+
+    /**
      * @return BelongsTo
      */
-    public function stripeScope()
+    public function stripeScope(): BelongsTo
     {
         return $this->belongsTo(StripeScope::class);
     }
@@ -37,7 +60,7 @@ class StripeCredentialScope extends Model
     /**
      * @return BelongsTo
      */
-    public function stripeCredential()
+    public function stripeCredential(): BelongsTo
     {
         return $this->belongsTo(StripeCredential::class);
     }
