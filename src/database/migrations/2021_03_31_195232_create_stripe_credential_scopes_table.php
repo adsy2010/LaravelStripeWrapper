@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStripeCredentialScopeTable extends Migration
+class CreateStripeCredentialScopesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateStripeCredentialScopeTable extends Migration
      */
     public function up()
     {
-        Schema::create('stripe_credential_scope', function (Blueprint $table) {
+        Schema::create('stripe_credential_scopes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('stripe_credentials_id');
             $table->foreignId('stripe_scope_id');
             $table->string('access', 1); //r,w,n
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateStripeCredentialScopeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stripe_credentials_scope');
+        Schema::dropIfExists('stripe_credentials_scopes');
     }
 }
