@@ -8,11 +8,19 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Stripe\StripeClient;
 
+/**
+ * Class StripeCredentialScope
+ * @package Adsy2010\LaravelStripeWrapper\Models
+ * @mixin Builder
+ */
 class StripeCredentialScope extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $guarded = ['id'];
 
     /**
      * Retrieves all credentials which match the scope and access level
