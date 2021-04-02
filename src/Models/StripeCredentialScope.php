@@ -46,7 +46,7 @@ class StripeCredentialScope extends Model
 
         $credential = $credentials->first();
 
-        return new StripeClient($credential->stripeCredential->value);
+        return new StripeClient(decrypt($credential->stripeCredential->value));
     }
 
     /**
