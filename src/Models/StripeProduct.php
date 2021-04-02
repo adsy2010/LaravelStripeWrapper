@@ -6,27 +6,38 @@ use Adsy2010\LaravelStripeWrapper\Exceptions\StripeApiParameterException;
 use Adsy2010\LaravelStripeWrapper\Exceptions\StripeCredentialsMissingException;
 use Adsy2010\LaravelStripeWrapper\Exceptions\StripeVetCheckupApiUnknownException;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Stripe\Collection;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Product;
 
+/**
+ * Class StripeProduct
+ * @package Adsy2010\LaravelStripeWrapper\Models
+ * @mixin Builder
+ */
 class StripeProduct extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
 
+    protected $fillable = ['name','description','active','created','updated','images','livemode','metadata','package_dimensions','shippable','statement_descriptor','unit_label','url'];
 
     /**
-     * @param array $data
+     * Create a product on Stripe
+     *
+     * @param array $data The data to add to the product. Name is a required field
+     * @param bool $store Store locally, default is false
      * @return Exception|Product
-     * @throws StripeCredentialsMissingException
      * @throws StripeApiParameterException
+     * @throws StripeCredentialsMissingException
      * @throws StripeVetCheckupApiUnknownException
      */
-    public function store(array $data)
+    public function store(array $data, $store = false)
     {
         try {
 
@@ -34,7 +45,15 @@ class StripeProduct extends Model
 
             $stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET], 'w');
 
-            return $stripe->products->create($data);
+            $productItem = $stripe->products->create($data);
+
+            if($store) {
+
+                (new StripeProduct)->updateOrCreate(['id' => $productItem->id], $productItem->toArray());
+
+            }
+
+            return $productItem;
 
         } catch (ApiErrorException $apiErrorException) {
 
@@ -44,14 +63,17 @@ class StripeProduct extends Model
     }
 
     /**
-     * @param $product
-     * @param array $data
+     * Updates a product on Stripe
+     *
+     * @param string $product The product id
+     * @param array $data The data to update the product with
+     * @param bool $store Store locally, default is false
      * @return Exception|ApiErrorException|Product
      * @throws StripeApiParameterException
      * @throws StripeCredentialsMissingException
      * @throws StripeVetCheckupApiUnknownException
      */
-    public function change($product, array $data)
+    public function change(string $product, array $data, $store = false)
     {
         try {
 
@@ -59,7 +81,15 @@ class StripeProduct extends Model
 
             $stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET], 'w');
 
-            return $stripe->products->update($product, $data);
+            $productItem = $stripe->products->update($product, $data);
+
+            if($store) {
+
+                (new StripeProduct)->updateOrCreate(['id' => $productItem->id], $productItem->toArray());
+
+            }
+
+            return $productItem;
 
         } catch (ApiErrorException $apiErrorException) {
 
@@ -70,17 +100,28 @@ class StripeProduct extends Model
     }
 
     /**
-     * @param $product
+     * Delete a product from Stripe
+     *
+     * @param string $product The product id
+     * @param bool $store Delete locally, default is false
      * @return Exception|ApiErrorException|Product
      * @throws StripeCredentialsMissingException
      */
-    public function trash($product)
+    public function trash(string $product, $store = false)
     {
         try {
 
             $stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET], 'w');
 
-            return $stripe->products->delete($product, []);
+            $productItem = $stripe->products->delete($product, []);
+
+            if($store) {
+
+                StripeProduct::where('id', '=', $productItem->id)->delete();
+
+            }
+
+            return $productItem;
 
         } catch (ApiErrorException $apiErrorException) {
 
@@ -90,17 +131,28 @@ class StripeProduct extends Model
     }
 
     /**
-     * @param $product
+     * Retrieves a product from Stripe
+     *
+     * @param string $product The product id
+     * @param bool $store Store locally, default is false
      * @return Exception|ApiErrorException|Product
      * @throws StripeCredentialsMissingException
      */
-    public function retrieve($product)
+    public function retrieve(string $product, $store = false)
     {
         try {
 
             $stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET]);
 
-            return $stripe->products->retrieve($product, []);
+            $productItem = $stripe->products->retrieve($product, []);
+
+            if($store) {
+
+                (new StripeProduct)->updateOrCreate(['id' => $productItem->id], $productItem->toArray());
+
+            }
+
+            return $productItem;
 
         } catch (ApiErrorException $apiErrorException) {
 
@@ -110,20 +162,35 @@ class StripeProduct extends Model
     }
 
     /**
-     * @param array $data
+     * Retrieves all products from Stripe or a limited set based on supplied paramters
+     *
+     * @param array $params Parameters for finding products
+     * @param bool $store Store locally, default is false
      * @return Exception|Collection|ApiErrorException
      * @throws StripeApiParameterException
      * @throws StripeCredentialsMissingException
      * @throws StripeVetCheckupApiUnknownException
      */
-    public function retrieveAll(array $data = [])
+    public function retrieveAll(array $params = [], $store = false)
     {
         try {
-            $data = StripeVet::checkup($data, 'products-params');
+            $data = StripeVet::checkup($params, 'products-params');
 
             $stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET]);
 
-            return $stripe->products->all($data);
+            $productItems = $stripe->products->all($data);
+
+            if($store) {
+
+                foreach ($productItems as $productItem) {
+
+                    $stripeProducts = (new StripeProduct)->updateOrCreate(['id' => $productItem->id], $productItem->toArray());
+
+                }
+
+            }
+
+            return $productItems;
 
         } catch (ApiErrorException $apiErrorException) {
 
