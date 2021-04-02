@@ -19,7 +19,7 @@ use Stripe\Product;
  * @package Adsy2010\LaravelStripeWrapper\Models
  * @mixin Builder
  */
-class StripeProduct extends Model
+class StripeProduct extends Model implements StripeCrud
 {
     use HasFactory, SoftDeletes;
 
@@ -65,7 +65,7 @@ class StripeProduct extends Model
     /**
      * Updates a product on Stripe
      *
-     * @param string $product The product id
+     * @param string $id The product id
      * @param array $data The data to update the product with
      * @param bool $store Store locally, default is false
      * @return Exception|ApiErrorException|Product
@@ -73,7 +73,7 @@ class StripeProduct extends Model
      * @throws StripeCredentialsMissingException
      * @throws StripeVetCheckupApiUnknownException
      */
-    public function change(string $product, array $data, $store = false)
+    public function change(string $id, array $data, $store = false)
     {
         try {
 
@@ -81,7 +81,7 @@ class StripeProduct extends Model
 
             $stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET], 'w');
 
-            $productItem = $stripe->products->update($product, $data);
+            $productItem = $stripe->products->update($id, $data);
 
             if($store) {
 
@@ -102,18 +102,18 @@ class StripeProduct extends Model
     /**
      * Delete a product from Stripe
      *
-     * @param string $product The product id
+     * @param string $id The product id
      * @param bool $store Delete locally, default is false
      * @return Exception|ApiErrorException|Product
      * @throws StripeCredentialsMissingException
      */
-    public function trash(string $product, $store = false)
+    public function trash(string $id, $store = false)
     {
         try {
 
             $stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET], 'w');
 
-            $productItem = $stripe->products->delete($product, []);
+            $productItem = $stripe->products->delete($id, []);
 
             if($store) {
 
@@ -133,18 +133,18 @@ class StripeProduct extends Model
     /**
      * Retrieves a product from Stripe
      *
-     * @param string $product The product id
+     * @param string $id The product id
      * @param bool $store Store locally, default is false
      * @return Exception|ApiErrorException|Product
      * @throws StripeCredentialsMissingException
      */
-    public function retrieve(string $product, $store = false)
+    public function retrieve(string $id, $store = false)
     {
         try {
 
             $stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET]);
 
-            $productItem = $stripe->products->retrieve($product, []);
+            $productItem = $stripe->products->retrieve($id, []);
 
             if($store) {
 
