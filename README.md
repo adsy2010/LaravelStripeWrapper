@@ -15,7 +15,8 @@ Add the provider to your service providers array in config/app.php
 
 Finally, publish the migrations
 
-    php artisan vendor:publish
+    php artisan vendor:publish --provider=Adsy2010\LaravelStripeWrapper\LaravelStripeWrapperServiceProvider
+
 
 ## Usage
 
