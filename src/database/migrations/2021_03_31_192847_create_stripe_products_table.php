@@ -28,6 +28,7 @@ class CreateStripeProductsTable extends Migration
             $table->string('statement_descriptor')->nullable();
             $table->string('unit_label')->nullable();
             $table->string('url')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
