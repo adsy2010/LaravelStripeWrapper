@@ -88,6 +88,6 @@ class CreateStripeScopesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stripe_scope');
+        Schema::dropIfExists('stripe_scopes');
     }
 }
