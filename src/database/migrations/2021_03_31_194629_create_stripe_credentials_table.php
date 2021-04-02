@@ -17,6 +17,7 @@ class CreateStripeCredentialsTable extends Migration
             $table->id();
             $table->string('key');
             $table->string('value', 512);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
