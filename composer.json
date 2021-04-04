@@ -1,5 +1,5 @@
 {
-    "name": "adsy2010/LaravelStripeWrapper",
+    "name": "adsy2010/laravel-stripe-wrapper",
     "description": "Wrapper for Stripe checkout",
     "require": {
         "php": "^7.2.5|^8.0",
@@ -11,5 +11,10 @@
             "email": "adsy2010@users.noreply.github.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Adsy2010\\LaravelStripeWrapper\\": "src"
+        }
+    }
 }
