@@ -7,6 +7,7 @@ use Adsy2010\LaravelStripeWrapper\Exceptions\StripeScopeRequiredException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -84,12 +85,26 @@ class StripeCredential extends Model
         //Create a credential scope for each scope provided with the access type provided
         foreach ($scopes as $scope) {
 
-            (new StripeCredentialScope)->create(['stripe_credentials_id' => $this->id, 'stripe_scope_id' => $scope, 'access' => $access]);
+            (new StripeCredentialScope)->create(['stripe_credential_id' => $this->id, 'stripe_scope_id' => $scope, 'access' => $access]);
 
         }
 
         return $this;
     }
 
+    public function stripeCredentialScope(): HasMany
+    {
+        return $this->hasMany(StripeCredentialScope::class);
+    }
+
+    /**
+     * @return bool|null
+     * @throws \Exception
+     */
+    public function delete(): ?bool
+    {
+        $this->stripeCredentialScope()->delete();
+        return parent::delete();
+    }
 
 }
