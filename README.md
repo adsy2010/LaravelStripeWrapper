@@ -5,7 +5,7 @@ To install from composer run the following (not live yet)
 
     composer require adsy2010/laravelstripewrapper
 
-Add the provider to your service providers array in config/app.php
+Add the provider to your service providers array in `config/app.php`
 
 ```php
 'providers' => [
@@ -15,12 +15,31 @@ Add the provider to your service providers array in config/app.php
 ],
 ```
 
+If you would like to use the full set of migrations without publishing them, add the following service provider
+to your service providers array in `config/app.php`
+
+```php
+'providers' => [
+    ...
+    \Adsy2010\LaravelStripeWrapper\LaravelStripeWrapperServiceProvider::class,
+    \Adsy2010\LaravelStripeWrapper\LaravelStripeWrapperMigrationServiceProvider::class,
+    ...
+],
+```
+
 Finally, publish the migrations
 
-```bash 
+```bash
 php artisan vendor:publish --provider=Adsy2010\LaravelStripeWrapper\LaravelStripeWrapperServiceProvider
 ```
 
+Optionally, you can skip publishing all migrations and run the tag to publish the required migrations
+
+```bash
+php artisan vendor:publish --tag='credential-migrations'
+php artisan vendor:publish --tag='customer-migrations'
+php artisan vendor:publish --tag='product-migrations'
+```
 
 ## Usage
 
