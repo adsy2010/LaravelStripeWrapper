@@ -42,6 +42,14 @@ To add an api key to the database, you can run the following:
 
 Note that by default, an added scope is read, if 'w' is specified as the access type, the api key scope will be classified as writable.
 
+If you only wish to use the credentials feature of this package, you may do so by utilising the following code:
+
+```php
+$stripe = StripeCredentialScope::client([StripeScope::PRODUCTS, StripeScope::SECRET], 'w');
+```
+
+This code will retrieve any api key in the database that matches the specified scopes and create a `\Stripe\StripeClient` instance from the `stripe/stripe-php` library. 
+
 ### Products
 
 Coming soon!
