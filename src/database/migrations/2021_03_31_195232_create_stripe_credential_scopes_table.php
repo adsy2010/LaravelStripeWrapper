@@ -15,7 +15,7 @@ class CreateStripeCredentialScopesTable extends Migration
     {
         Schema::create('stripe_credential_scopes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('stripe_credentials_id');
+            $table->foreignId('stripe_credential_id');
             $table->foreignId('stripe_scope_id');
             $table->string('access', 1); //r,w,n
             $table->softDeletes();
@@ -30,6 +30,6 @@ class CreateStripeCredentialScopesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stripe_credentials_scopes');
+        Schema::dropIfExists('stripe_credential_scopes');
     }
 }
