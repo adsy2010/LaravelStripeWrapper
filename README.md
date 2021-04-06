@@ -7,21 +7,49 @@ To install from composer run the following (not live yet)
 
 Add the provider to your service providers array in config/app.php
 
-        'providers' => [
-            ...
-            \Adsy2010\LaravelStripeWrapper\LaravelStripeWrapperServiceProvider::class,
-            ...
-        ]
+```php
+'providers' => [
+    ...
+    \Adsy2010\LaravelStripeWrapper\LaravelStripeWrapperServiceProvider::class,
+    ...
+],
+```
 
 Finally, publish the migrations
 
-    php artisan vendor:publish --provider=Adsy2010\LaravelStripeWrapper\LaravelStripeWrapperServiceProvider
+```bash 
+php artisan vendor:publish --provider=Adsy2010\LaravelStripeWrapper\LaravelStripeWrapperServiceProvider
+```
 
 
 ## Usage
 
-Coming soon!
+
+### Credentials
+
+To add an api key to the database, you can run the following:
+
+```php
+(new StripeCredential)
+    ->store(['key' => 'Public Key', 'value' => 'YOUR_STRIPE_PUBLIC_API_KEY_HERE'])
+    ->includeScopes([StripeScope::PUBLISHABLE], 'w');
+
+(new StripeCredential)
+    ->store(['key' => 'Secret Key', 'value' => 'YOUR_SECRET_OR_RESTRICTED API_KEY'])
+    ->includeScopes([StripeScope::SECRET], 'w')
+    ->includeScopes([StripeScope::PRODUCTS, StripeScope::CHECKOUT_SESSIONS]);
+```
+
+Note that by default, an added scope is read, if 'w' is specified as the access type, the api key scope will be classified as writable.
 
 ### Products
+
+Coming soon!
+
 ### Customers
+
+Coming soon!
+
 ### Payments
+
+Coming soon!
