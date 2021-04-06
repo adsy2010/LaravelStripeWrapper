@@ -23,10 +23,28 @@ class LaravelStripeWrapperServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+        $this->publishes([
+            __DIR__.'/database/migrations/credentials' => database_path('migrations')
+        ], 'migrations');
 
         $this->publishes([
-            __DIR__.'/database/migrations' => database_path('migrations')
+            __DIR__.'/database/migrations/credentials' => database_path('migrations')
+        ], 'credential-migrations');
+
+        $this->publishes([
+            __DIR__.'/database/migrations/customers' => database_path('migrations')
         ], 'migrations');
+
+        $this->publishes([
+            __DIR__.'/database/migrations/customers' => database_path('migrations')
+        ], 'customer-migrations');
+
+        $this->publishes([
+            __DIR__.'/database/migrations/products' => database_path('migrations')
+        ], 'migrations');
+
+        $this->publishes([
+            __DIR__.'/database/migrations/products' => database_path('migrations')
+        ], 'product-migrations');
     }
 }
