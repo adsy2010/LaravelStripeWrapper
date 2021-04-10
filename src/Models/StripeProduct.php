@@ -25,7 +25,17 @@ class StripeProduct extends Model implements StripeCrud
 
     protected $guarded = ['id'];
 
-    protected $fillable = ['name','description','active','created','updated','images','livemode','metadata','package_dimensions','shippable','statement_descriptor','unit_label','url'];
+    public $incrementing = false;
+
+    protected $fillable = ['id','name','description','active','created','updated','images','livemode','metadata','package_dimensions','shippable','statement_descriptor','unit_label','url'];
+
+    protected $casts = [
+        'attributes' => 'json',
+        'images' => 'json',
+        'metadata' => 'json',
+        'created' => 'datetime',
+        'updated' => 'datetime'
+    ];
 
     /**
      * Create a product on Stripe
