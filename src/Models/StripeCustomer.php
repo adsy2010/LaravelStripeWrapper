@@ -2,10 +2,23 @@
 
 namespace Adsy2010\LaravelStripeWrapper\Models;
 
+use Adsy2010\LaravelStripeWrapper\Exceptions\StripeApiParameterException;
+use Adsy2010\LaravelStripeWrapper\Exceptions\StripeCredentialsMissingException;
+use Adsy2010\LaravelStripeWrapper\Exceptions\StripeVetCheckupApiUnknownException;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Stripe\Collection;
+use Stripe\Customer;
+use Stripe\Exception\ApiErrorException;
 
+/**
+ * Class StripeCustomer
+ * @package Adsy2010\LaravelStripeWrapper\Models
+ * @mixin Builder
+ */
 class StripeCustomer extends Model implements StripeCrud
 {
     use HasFactory, SoftDeletes;
@@ -25,53 +38,178 @@ class StripeCustomer extends Model implements StripeCrud
     ];
 
     /**
-     * @param array $data
-     * @param bool $store
-     * @return mixed|void
+     * Create a customer on Stripe
+     *
+     * @param array $data The data to add to the customer. There are no required fields specified in the Stripe API Documentation.
+     * @param bool $store Store locally, default is false
+     * @return Exception|Customer
+     * @throws StripeApiParameterException
+     * @throws StripeCredentialsMissingException
+     * @throws StripeVetCheckupApiUnknownException
      */
     public function store(array $data, bool $store = false)
     {
-        // TODO: Implement store() method.
+        try {
+
+            $data = StripeVet::checkup($data, 'customers');
+
+            $stripe = StripeCredentialScope::client([StripeScope::CUSTOMERS, StripeScope::SECRET], 'w');
+
+            $customerItem = $stripe->customers->create($data);
+
+            if($store) {
+
+                (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
+
+                //TODO: Store customers address
+                //TODO: Store Customers shipping details
+                //TODO: Store Customers invoice settings
+
+            }
+
+            return $customerItem;
+
+        } catch (ApiErrorException $apiErrorException) {
+
+            return $apiErrorException;
+
+        }
     }
 
     /**
-     * @param string $id
-     * @param array $data
-     * @param bool $store
-     * @return mixed|void
+     * Updates a product on Stripe
+     *
+     * @param string $id The customer id
+     * @param array $data The data to update the customer with
+     * @param bool $store Store locally, default is false
+     * @return Exception|ApiErrorException|Customer
+     * @throws StripeApiParameterException
+     * @throws StripeCredentialsMissingException
+     * @throws StripeVetCheckupApiUnknownException
      */
     public function change(string $id, array $data, bool $store = false)
     {
-        // TODO: Implement change() method.
+        try {
+
+            $data = StripeVet::checkup($data, 'customers');
+
+            $stripe = StripeCredentialScope::client([StripeScope::CUSTOMERS, StripeScope::SECRET], 'w');
+
+            $customerItem = $stripe->customers->update($id, $data);
+
+            if($store) {
+
+                (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
+
+            }
+
+            return $customerItem;
+
+        } catch (ApiErrorException $apiErrorException) {
+
+            return $apiErrorException;
+
+        }
     }
 
     /**
-     * @param string $id
-     * @param bool $store
-     * @return mixed|void
+     * Delete a customer from Stripe
+     *
+     * @param string $id The customer id
+     * @param bool $store Delete locally, default is false
+     * @return Exception|ApiErrorException|Customer
+     * @throws StripeCredentialsMissingException
      */
     public function trash(string $id, bool $store = false)
     {
-        // TODO: Implement trash() method.
+        try{
+
+            $stripe = StripeCredentialScope::client([StripeScope::CUSTOMERS, StripeScope::SECRET], 'w');
+
+            $customerItem = $stripe->customers->delete($id, []);
+
+            if($store) {
+
+                StripeCustomer::where('id', '=', $customerItem->id)->delete();
+
+            }
+
+            return $customerItem;
+
+        } catch (ApiErrorException $apiErrorException) {
+
+            return $apiErrorException;
+
+        }
     }
 
     /**
-     * @param string $id
-     * @param bool $store
-     * @return mixed|void
+     * Retrieves a customer from Stripe
+     *
+     * @param string $id The customer id
+     * @param bool $store Store locally, default is false
+     * @return Exception|ApiErrorException|Customer
+     * @throws StripeCredentialsMissingException
      */
     public function retrieve(string $id, bool $store = false)
     {
-        // TODO: Implement retrieve() method.
+        try{
+
+            $stripe = StripeCredentialScope::client([StripeScope::CUSTOMERS, StripeScope::SECRET]);
+
+            $customerItem = $stripe->customers->retrieve($id, []);
+
+            if($store) {
+
+                (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
+
+            }
+
+            return $customerItem;
+
+        } catch (ApiErrorException $apiErrorException) {
+
+            return $apiErrorException;
+
+        }
     }
 
     /**
-     * @param array $params
-     * @param bool $store
-     * @return mixed|void
+     * Retrieves all customers from Stripe or a limited set based on supplied parameters
+     *
+     * @param array $params Parameters for finding customers
+     * @param bool $store Store locally, default is false
+     * @return Exception|Collection|ApiErrorException
+     * @throws StripeApiParameterException
+     * @throws StripeCredentialsMissingException
+     * @throws StripeVetCheckupApiUnknownException
      */
     public function retrieveAll(array $params, bool $store = false)
     {
-        // TODO: Implement retrieveAll() method.
+        try {
+
+            $data = StripeVet::checkup($params, 'customers-params');
+
+            $stripe = StripeCredentialScope::client([StripeScope::CUSTOMERS, StripeScope::SECRET]);
+
+            $customerItems = $stripe->customers->all($data);
+
+            if($store) {
+
+                foreach ($customerItems as $customerItem) {
+
+                    $stripeCustomers = (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
+
+                }
+
+            }
+
+            return $customerItems;
+
+        } catch (ApiErrorException $apiErrorException) {
+
+            return $apiErrorException;
+
+        }
     }
 }
