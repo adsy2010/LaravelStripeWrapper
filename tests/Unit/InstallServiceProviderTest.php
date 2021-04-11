@@ -19,11 +19,7 @@ class InstallServiceProviderTest extends TestCase
             'migrations/2021_03_31_200019_create_stripe_customers_table.php',
             'migrations/2021_04_06_195700_create_stripe_customers_address_table.php',
             'migrations/2021_04_06_195943_create_stripe_customers_shipping_details_table.php',
-            'migrations/2021_04_06_200024_create_stripe_customers_address_types_table.php',
             'migrations/2021_04_06_200403_create_stripe_customers_invoice_settings_table.php',
-            'migrations/2021_04_06_200521_create_stripe_customers_payment_sources_table.php',
-            'migrations/2021_04_06_200536_create_stripe_customers_subscriptions_table.php',
-            'migrations/2021_04_06_200618_create_stripe_customers_tax_ids_table.php',
         ];
 
 
@@ -70,11 +66,7 @@ class InstallServiceProviderTest extends TestCase
             'migrations/2021_03_31_200019_create_stripe_customers_table.php',
             'migrations/2021_04_06_195700_create_stripe_customers_address_table.php',
             'migrations/2021_04_06_195943_create_stripe_customers_shipping_details_table.php',
-            'migrations/2021_04_06_200024_create_stripe_customers_address_types_table.php',
             'migrations/2021_04_06_200403_create_stripe_customers_invoice_settings_table.php',
-            'migrations/2021_04_06_200521_create_stripe_customers_payment_sources_table.php',
-            'migrations/2021_04_06_200536_create_stripe_customers_subscriptions_table.php',
-            'migrations/2021_04_06_200618_create_stripe_customers_tax_ids_table.php',
         ];
 
         //Ensure none exist
