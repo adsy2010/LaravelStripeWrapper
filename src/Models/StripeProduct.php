@@ -172,7 +172,7 @@ class StripeProduct extends Model implements StripeCrud
     }
 
     /**
-     * Retrieves all products from Stripe or a limited set based on supplied paramters
+     * Retrieves all products from Stripe or a limited set based on supplied parameters
      *
      * @param array $params Parameters for finding products
      * @param bool $store Store locally, default is false
