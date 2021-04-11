@@ -5,7 +5,7 @@ API.
 
 To install from composer run the following (this is an alpha release and no automatic versions are available yet)
 
-    composer require adsy2010/laravel-stripe-wrapper:v0.0.1-alpha
+    composer require adsy2010/laravel-stripe-wrapper:v0.0.2-alpha
 
 Add the provider to your service providers array in `config/app.php`
 
