@@ -3,9 +3,9 @@
 Laravel stripe wrapper intends to take the hassle out of setting up credentials and communicating them to the Stripe
 API.
 
-To install from composer run the following (not live yet)
+To install from composer run the following (this is an alpha release and no automatic versions are available yet)
 
-    composer require adsy2010/laravelstripewrapper
+    composer require adsy2010/laravel-stripe-wrapper:v0.0.1-alpha
 
 Add the provider to your service providers array in `config/app.php`
 
