@@ -15,6 +15,12 @@ class CreateStripeCustomersAddressTable extends Migration
     {
         Schema::create('stripe_customers_address', function (Blueprint $table) {
             $table->id();
+            $table->string('line1');
+            $table->string('line2');
+            $table->string('city');
+            $table->string('state');
+            $table->string('postal_code');
+            $table->string('country');
             $table->timestamps();
         });
     }
