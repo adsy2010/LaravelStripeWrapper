@@ -15,7 +15,7 @@ class CreateStripeCustomersTable extends Migration
     {
         Schema::create('stripe_customers', function (Blueprint $table) {
             $table->string('id')->primary()->unique();
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->string('email')->nullable();
             $table->json('metadata')->nullable();
             $table->string('name')->nullable();
