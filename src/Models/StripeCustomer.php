@@ -4,13 +4,25 @@ namespace Adsy2010\LaravelStripeWrapper\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StripeCustomer extends Model implements StripeCrud
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
 
+    public $incrementing = false;
+
+    protected $fillable = ['id','description','email','metadata','name','phone','balance','created','currency','default_source','delinquent','discount','invoice_prefix','livemode','next_invoice_sequence','preferred_locales','tax_exempt'];
+
+    protected $casts = [
+        'preferred_locales' => 'json',
+        'discount' => 'json',
+        'metadata' => 'json',
+        'created' => 'datetime',
+        'updated' => 'datetime'
+    ];
 
     /**
      * @param array $data
