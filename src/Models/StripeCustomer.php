@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Stripe\Collection;
 use Stripe\Customer;
@@ -60,10 +61,10 @@ class StripeCustomer extends Model implements StripeCrud
             if($store) {
 
                 (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
+                (new StripeCustomerAddress)->updateOrCreate(['stripe_customer_id' => $customerItem->id], $customerItem->address->toArray());
+                (new StripeCustomerInvoiceSettings)->updateOrCreate(['stripe_customer_id'=>$customerItem->id], $customerItem->invoice_settings->toArray());
 
-                //TODO: Store customers address
                 //TODO: Store Customers shipping details
-                //TODO: Store Customers invoice settings
 
             }
 
@@ -100,6 +101,8 @@ class StripeCustomer extends Model implements StripeCrud
             if($store) {
 
                 (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
+                (new StripeCustomerAddress)->updateOrCreate(['stripe_customer_id' => $customerItem->id], $customerItem->address->toArray());
+                (new StripeCustomerInvoiceSettings)->updateOrCreate(['stripe_customer_id'=>$customerItem->id], $customerItem->invoice_settings->toArray());
 
             }
 
@@ -131,6 +134,8 @@ class StripeCustomer extends Model implements StripeCrud
             if($store) {
 
                 StripeCustomer::where('id', '=', $customerItem->id)->delete();
+                StripeCustomerAddress::where('stripe_customer_id', '=', $customerItem->id)->delete();
+                StripeCustomerInvoiceSettings::where('stripe_customer_id', '=', $customerItem->id)->delete();
 
             }
 
@@ -162,6 +167,8 @@ class StripeCustomer extends Model implements StripeCrud
             if($store) {
 
                 (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
+                (new StripeCustomerAddress)->updateOrCreate(['stripe_customer_id' => $customerItem->id], $customerItem->address->toArray());
+                (new StripeCustomerInvoiceSettings)->updateOrCreate(['stripe_customer_id'=>$customerItem->id], $customerItem->invoice_settings->toArray());
 
             }
 
@@ -199,6 +206,8 @@ class StripeCustomer extends Model implements StripeCrud
                 foreach ($customerItems as $customerItem) {
 
                     $stripeCustomers = (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
+                    (new StripeCustomerAddress)->updateOrCreate(['stripe_customer_id' => $customerItem->id], $customerItem->address->toArray());
+                    (new StripeCustomerInvoiceSettings)->updateOrCreate(['stripe_customer_id'=>$customerItem->id], $customerItem->invoice_settings->toArray());
 
                 }
 
@@ -211,5 +220,25 @@ class StripeCustomer extends Model implements StripeCrud
             return $apiErrorException;
 
         }
+    }
+
+    /**
+     * The customer address related to this customer
+     *
+     * @return HasOne
+     */
+    public function address(): HasOne
+    {
+        return $this->hasOne(StripeCustomerAddress::class);
+    }
+
+    /**
+     * The customer invoice settings related to this customer
+     *
+     * @return HasOne
+     */
+    public function invoiceSettings(): HasOne
+    {
+        return $this->hasOne(StripeCustomerInvoiceSettings::class);
     }
 }
