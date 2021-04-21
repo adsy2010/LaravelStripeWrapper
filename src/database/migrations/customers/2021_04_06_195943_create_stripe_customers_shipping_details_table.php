@@ -15,10 +15,11 @@ class CreateStripeCustomersShippingDetailsTable extends Migration
     {
         Schema::create('stripe_customers_shipping_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customers_address_id');
+            $table->string('customers_address_id');
             $table->string('name');
             $table->string('phone')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
