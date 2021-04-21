@@ -34,7 +34,16 @@ class StripeCustomerTest extends TestCase
      */
     function the_stripe_customer_is_created_on_stripe_and_locally()
     {
-        $customer = ['email' => 'test@example.com', 'name' => 'Bob Smith'];
+        $customer = [
+            'email' => 'test@example.com',
+            'name' => 'Bob Smith',
+            'address' => [
+                'line1' => 'First line of address',
+                'line2' => 'Second line of address',
+                'city' => 'Some City',
+                'postal_code' => 'AB12 3RD'
+            ]
+        ];
 
         $secretCredentials = (new StripeCredential)
             ->store(['key' => 'secret', 'value' => env('STRIPE_SECRET_KEY')])
@@ -51,6 +60,12 @@ class StripeCustomerTest extends TestCase
         $this->assertSoftDeleted($localStripeCustomer);
 
         $secretCredentials->delete();
+    }
+
+    function the_stripe_customer_address_is_created($customer)
+    {
+        $this->assertArrayHasKey('address', $customer);
+        $this->assertNotEmpty($customer['address']);
     }
 
     function the_stripe_customer_is_deleted($id, $store = false)
