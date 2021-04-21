@@ -12,7 +12,7 @@ class StripeVet extends Model
     const PRODUCTS = ['id', 'name', 'description', 'active', 'created', 'updated', 'images', 'livemode', 'metadata', 'package_dimensions', 'shippable', 'statement_descriptor', 'unit_label', 'url'];
     const PRODUCTS_PARAMS = ['active', 'created', 'ending_before', 'ids', 'limit', 'shippable', 'starting_after', 'url'];
 
-    const CUSTOMERS = ['id','description','email','metadata','name','phone','balance','created','currency','default_source','delinquent','discount','invoice_prefix','livemode','next_invoice_sequence','preferred_locales','tax_exempt'];
+    const CUSTOMERS = ['id','description','email','metadata','name','phone','balance','created','currency','default_source','delinquent','discount','invoice_prefix','livemode','next_invoice_sequence','preferred_locales','tax_exempt','address'=>['line1','line2','city','state','country','postal_code']];
     const CUSTOMERS_PARAMS = ['email', 'created', 'ending_before', 'limit', 'starting_after'];
 
     /**
@@ -57,11 +57,35 @@ class StripeVet extends Model
 
         foreach ($data as $key => $values) {
 
+            //Check main haystack
             if (!in_array($key, $haystack)) {
 
-                throw new StripeApiParameterException();
+                //If key does not exist as an array, throw an exception
+                if(!array_key_exists($key, $haystack)) {
+
+                    throw new StripeApiParameterException();
+
+                } else {
+
+                    //Check the inner key haystack array to ensure that the request is allowed or throw exception
+                    if(is_array($values)) {
+
+                        foreach ($values as $innerKey => $innerValues) {
+
+                            if (!in_array($innerKey, $haystack[$key])) {
+
+                                throw new StripeApiParameterException();
+
+                            }
+
+                        }
+
+                    }
+
+                }
 
             }
+
         }
 
         return $data;
