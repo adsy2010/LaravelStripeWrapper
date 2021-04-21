@@ -3,7 +3,7 @@
     "description": "Wrapper for Stripe API",
     "require": {
         "php": "^7.2.5|^8.0",
-        "stripe/stripe-php": "^v7.76.0"
+        "stripe/stripe-php": "^v7.77.0"
     },
     "authors": [
         {
