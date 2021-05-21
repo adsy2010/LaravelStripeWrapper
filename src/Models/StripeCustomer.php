@@ -61,10 +61,15 @@ class StripeCustomer extends Model implements StripeCrud
             if($store) {
 
                 (new StripeCustomer)->updateOrCreate(['id' => $customerItem->id], $customerItem->toArray());
-                (new StripeCustomerAddress)->updateOrCreate(['stripe_customer_id' => $customerItem->id], $customerItem->address->toArray());
+                (new StripeCustomerAddress)->updateOrCreate(['stripe_customer_id' => $customerItem->id, 'shipping' => false], $customerItem->address->toArray());
                 (new StripeCustomerInvoiceSettings)->updateOrCreate(['stripe_customer_id'=>$customerItem->id], $customerItem->invoice_settings->toArray());
 
-                //TODO: Store Customers shipping details
+                if(!empty($shippingAddress = $customerItem->shipping)){
+
+                    $customerAddress = (new StripeCustomerAddress)->updateOrCreate(['stripe_customer_id' => $customerItem->id, 'shipping' => true], $shippingAddress->address->toArray());
+                    (new StripeCustomerShippingDetails)->updateOrCreate(['stripe_customers_address_id' => $customerAddress->id], $shippingAddress->toArray());
+
+                }
 
             }
 
