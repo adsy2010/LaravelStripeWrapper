@@ -42,6 +42,15 @@ class StripeCustomerTest extends TestCase
                 'line2' => 'Second line of address',
                 'city' => 'Some City',
                 'postal_code' => 'AB12 3RD'
+            ],
+            'shipping' => [
+                'name' => 'Bob Smith',
+                'address' => [
+                    'line1' => 'First line of address',
+                    'line2' => 'Second line of address',
+                    'city' => 'Some City',
+                    'postal_code' => 'AB12 3RD'
+                ],
             ]
         ];
 
