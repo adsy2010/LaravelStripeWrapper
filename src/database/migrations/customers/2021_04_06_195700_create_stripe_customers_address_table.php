@@ -22,6 +22,7 @@ class CreateStripeCustomersAddressTable extends Migration
             $table->string('state')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('country')->nullable();
+            $table->boolean('shipping')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
