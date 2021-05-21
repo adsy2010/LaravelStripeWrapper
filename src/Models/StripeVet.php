@@ -30,8 +30,9 @@ class StripeVet extends Model
         'next_invoice_sequence',
         'preferred_locales',
         'tax_exempt',
-        'address'=>['line1','line2','city','state','country','postal_code'],
-        'invoice_settings'=>['custom_fields','default_payment_method','footer']
+        'address' => ['line1', 'line2', 'city', 'state', 'country', 'postal_code'],
+        'shipping' => ['name', 'phone', 'address' => ['line1', 'line2', 'city', 'state', 'country', 'postal_code']],
+        'invoice_settings' => ['custom_fields', 'default_payment_method', 'footer']
     ];
     const CUSTOMERS_PARAMS = ['email', 'created', 'ending_before', 'limit', 'starting_after'];
 
@@ -75,39 +76,41 @@ class StripeVet extends Model
                 throw new StripeVetCheckupApiUnknownException();
         }
 
-        foreach ($data as $key => $values) {
+        try {
 
-            //Check main haystack
-            if (!in_array($key, $haystack)) {
+            self::recurseVet($data, $haystack);
 
-                //If key does not exist as an array, throw an exception
-                if(!array_key_exists($key, $haystack)) {
+        }
+        catch (\Exception $exception) {
 
-                    throw new StripeApiParameterException();
-
-                } else {
-
-                    //Check the inner key haystack array to ensure that the request is allowed or throw exception
-                    if(is_array($values)) {
-
-                        foreach ($values as $innerKey => $innerValues) {
-
-                            if (!in_array($innerKey, $haystack[$key])) {
-
-                                throw new StripeApiParameterException();
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
+            throw new StripeApiParameterException();
 
         }
 
         return $data;
+    }
+
+    /**
+     * @param $data
+     * @param $template
+     * @return bool
+     * @throws \Exception
+     */
+    private static function recurseVet($data, $template)
+    {
+
+        foreach ($data as $key => $value)
+        {
+
+            if(is_array($value)) {
+
+                self::recurseVet($value, $template[$key]);
+            }
+
+            if(!in_array($key, $template) && !is_array($template[$key])) {
+                throw new \Exception($key.' missing');
+            }
+        }
+        return true;
     }
 }
