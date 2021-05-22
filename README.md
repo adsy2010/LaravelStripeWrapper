@@ -124,7 +124,70 @@ of the product.
 
 ### Customers
 
-Coming soon!
+Stripe customers <strong>are currently limited</strong> on the details that are held locally. Tax id data and payment methods features are not yet implemented. 
+The default payment method ID however is included.
+
+To create a customer on stripe, use the store method
+
+```php
+$customerDetails = [
+    'email' => 'test@example.com',
+    'name' => 'Bob Smith'
+];
+
+(new StripeCustomer)->store($customerDetails);
+```
+
+If you would like to utilise the local database when handling stripe customers, add true to the end of the statement
+
+```php
+$customerDetails = [
+    'email' => 'test@example.com',
+    'name' => 'Bob Smith'
+];
+
+(new StripeCustomer)->store($customerDetails, true);
+```
+
+To retrieve a customer from stripe use the retrieve method
+
+```php
+(new StripeCustomer)->retrieve('cust_123456789'); //add true to update the local database
+```
+
+There is a retrieve all method which can get all customers on stripe in one go optionally storing them. 
+The first argument is a list of parameters to filter by, so for example, The latest 3 customers are retrieved below.
+
+```php
+(new StripeCustomer)->retrieveAll(['limit' => 3]); //add true to update the local database
+```
+
+If you want to store but not filter all records, you should enter an empty array with true
+
+```php
+(new StripeCustomer)->retrieveAll([], true); //retrieve all with no filtering
+```
+
+To update a customer in stripe, use the change method
+
+```php
+$newcustomerDetails = [
+    'email' => 'test2@example.com',
+    'name' => 'Bobby Smith'
+];
+
+(new StripeCustomer)->change('cust_123456789', $newCustomerData); //add true to update the local database
+```
+
+To delete a customer from stripe, use the trash method
+
+```php
+(new StripeCustomer)->trash('cust_123456789'); //add true to update the local database
+```
+
+NOTE: If you want to use a local stripe customers table, you should either use the migration provided or use one 
+with the same table name. All methods have an optional store attribute which, if set to true will update a local 
+database version of the product.
 
 ### Payments
 
