@@ -12,6 +12,25 @@ class StripeVet extends Model
     const PRODUCTS = ['id', 'name', 'description', 'active', 'created', 'updated', 'images', 'livemode', 'metadata', 'package_dimensions', 'shippable', 'statement_descriptor', 'unit_label', 'url'];
     const PRODUCTS_PARAMS = ['active', 'created', 'ending_before', 'ids', 'limit', 'shippable', 'starting_after', 'url'];
 
+    const PRODUCT_PRICES = [
+        'id',
+        'currency',
+        'product',
+        'unit_amount', 'active',
+        'metadata',
+        'nickname',
+        'recurring',
+        'product_data',
+        'tiers',
+        'tiers_mode',
+        'billing_scheme',
+        'lookup_key',
+        'transfer_lookup_key',
+        'transform_quantity',
+        'unit_amount_decimal'
+    ];
+    const PRODUCT_PRICES_PARAMS = ['active', 'currency', 'product', 'type', 'created', 'ending_before', 'limit', 'lookup_keys', 'recurring', 'starting_after'];
+
     const CUSTOMERS = [
         'id',
         'description',
@@ -53,6 +72,12 @@ class StripeVet extends Model
 
                 break;
 
+            case 'product-prices':
+
+                $haystack = self::PRODUCT_PRICES;
+
+                break;
+
             case 'customers':
 
                 $haystack = self::CUSTOMERS;
@@ -68,6 +93,12 @@ class StripeVet extends Model
             case 'products-params':
 
                 $haystack = self::PRODUCTS_PARAMS;
+
+                break;
+
+            case 'product-prices-params':
+
+                $haystack = self::PRODUCT_PRICES_PARAMS;
 
                 break;
 
